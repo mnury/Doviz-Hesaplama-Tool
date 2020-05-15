@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>Döviz Hesaplama</title>
+	<meta name="description" content="Döviz Hesaplama"><meta name="viewport" content="width=device-width; initial-scale=0.7;">
+	<link href="doviz.css?v={random number/string}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<main><input checked="checked" id="tab1" name="tab" type="radio" /> <label for="tab1">Döviz Hesaplama</label>
+<section id="content1">
+<div class="panel">
+<form>
+<table align="center" cellpadding="2" cellspacing="2" width="400">
+	<tbody>
+		<tr>
+			<td width="205">İşlem T&uuml;r&uuml;</td>
+			<td width="380">
+			<div class="custom-select"><select class="select-style" id="IslemTuru" style="width: 100%;width: 100%; height:70px;height: 50px;"><option id="alis">D&ouml;viz Almak İstiyorum</option><option id="satis">D&ouml;viz Satmak İstiyorum</option> </select></div>
+			</td>
+		</tr>
+		<tr>
+			<td width="205">D&ouml;viz T&uuml;r&uuml;</td>
+			<td width="380">
+			<div class="custom-select"><select class="select-style" id="DovizTuru" style="width:100%;  height: 50px;"><option value="dolar">Dolar</option><option value="euro">Euro</option> </select></div>
+			</td>
+		</tr>
+		<tr>
+			<td>Miktarı Giriniz</td>
+			<td><input id="miktar" placeholder="0" type="number" /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><button class="button" id="hesapla" type="button">Hesapla</button></td>
+		</tr>
+	</tbody>
+</table>
+</form>
+
+<div id="ToplamSonuc"><span id="dovizmiktar">dovizmiktar</span> <span id="doviztur">doviztur</span> <span id="sonuc">1.00</span> <span id="son">eder</span> <span id="FiyatBilgisi">fiyat</span></div>
+</div>
+</section>
+</main>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script><script>
+
+
+var EuroFiyat;
+
+function dovizhesapla(){
+
+	var IslemTuru = document.getElementById("IslemTuru").value;
+	var DovizTuru = document.getElementById("DovizTuru").value;
+	var Miktar = document.getElementById("miktar").value;
+
+	if(Miktar<0){
+		alert("Lütfen pozitif bir miktar giriniz");
+		return;
+	}
+	
+	
+	if(IslemTuru === "Döviz Almak İstiyorum"){
+
+		if(DovizTuru== "dolar")
+		{
+
+		//doviz fiyatının alındığı site, JSON formatında
+		//Kullanırken free.currencyconverterapi.com sitesinden kendi API key'inizi alıp kullanınız.	
+		$.getJSON('https://free.currencyconverterapi.com/api/v4/convert?q=USD_TRY&compact=ultra&apiKey=a6c3b324a52254a90587', function(data) {
+		//data is the JSON string
+		
+		//0.01 alış fiyat farkı
+		DolarFiyat = data.USD_TRY + 0.01;
+		var toplam = DolarFiyat*Miktar;
+		document.getElementById("ToplamSonuc").style.display = "block";
+		document.getElementById("dovizmiktar").innerHTML = Miktar;
+		document.getElementById("doviztur").innerHTML = "Dolar";
+		document.getElementById("sonuc").innerHTML = Math.round(toplam) + " TL";
+		document.getElementById("son").innerHTML = "eder. ";
+		document.getElementById("FiyatBilgisi").innerHTML = "(Dolar Fiyat: "+ DolarFiyat.toFixed(3) + ") ";
+		
+	});	
+		}
+		//doviz fiyatının alındığı site, JSON formatında
+		//Kullanırken free.currencyconverterapi.com sitesinden kendi API key'inizi alıp kullanınız.	
+		else if(DovizTuru == "euro"){
+			$.getJSON('https://free.currencyconverterapi.com/api/v4/convert?q=EUR_TRY&compact=ultra&apiKey=129645a065811ea8c813', function(data) {
+		//data is the JSON string
+
+		//0.01 alış fiyat farkı
+		EuroFiyat = data.EUR_TRY + 0.01;
+		var toplam = EuroFiyat*Miktar;
+		document.getElementById("ToplamSonuc").style.display = "block";
+		document.getElementById("dovizmiktar").innerHTML = Miktar;
+		document.getElementById("doviztur").innerHTML = "Euro";
+		document.getElementById("sonuc").innerHTML = Math.round(toplam) + " TL ";
+		document.getElementById("son").innerHTML = "eder. ";
+		document.getElementById("FiyatBilgisi").innerHTML = "(Euro Fiyat: "+ EuroFiyat.toFixed(3) + ") ";
+		
+	});	
+		}
+
+		else{
+			
+		}
+		
+	}
+
+	//doviz fiyatının alındığı site, JSON formatında
+	//Kullanırken free.currencyconverterapi.com sitesinden kendi API key'inizi alıp kullanınız.	
+	else if(IslemTuru == "Döviz Satmak İstiyorum"){
+		if(DovizTuru== "dolar"){
+
+		$.getJSON('https://free.currencyconverterapi.com/api/v4/convert?q=USD_TRY&compact=ultra&apiKey=129645a065811ea8c813', function(data) {
+		//data is the JSON string
+
+		//-0.02 satış fiyat farkı
+		DolarFiyat = data.USD_TRY - 0.02;
+		var toplam = DolarFiyat*Miktar;
+		document.getElementById("ToplamSonuc").style.display = "block";
+		document.getElementById("dovizmiktar").innerHTML = Miktar;
+		document.getElementById("doviztur").innerHTML = "Dolar";
+		document.getElementById("sonuc").innerHTML = Math.round(toplam) + " TL ";
+		document.getElementById("son").innerHTML = "eder. ";
+		document.getElementById("FiyatBilgisi").innerHTML = "(Dolar Fiyat: "+ DolarFiyat.toFixed(3) + ") ";
+	});	
+		}
+
+		//doviz fiyatının alındığı site, JSON formatında
+		//Kullanırken free.currencyconverterapi.com sitesinden kendi API key'inizi alıp kullanınız.	
+		else if(DovizTuru == "euro"){
+			$.getJSON('https://free.currencyconverterapi.com/api/v4/convert?q=EUR_TRY&compact=ultra&apiKey=129645a065811ea8c813', function(data) {
+		//data is the JSON string
+
+		//-0.02 satış fiyat farkı
+		EuroFiyat = data.EUR_TRY - 0.02;
+		var toplam = EuroFiyat*Miktar;
+		document.getElementById("ToplamSonuc").style.display = "block";
+		document.getElementById("dovizmiktar").innerHTML = Miktar;
+		document.getElementById("doviztur").innerHTML = "Euro";
+		document.getElementById("sonuc").innerHTML = Math.round(toplam) + " TL ";
+		document.getElementById("son").innerHTML = "eder. ";
+		document.getElementById("FiyatBilgisi").innerHTML = "(Euro Fiyat: "+ EuroFiyat.toFixed(3) + ") ";
+	});	
+		}
+
+		else{
+			
+		}
+	}
+
+	else{
+		
+	}
+
+}
+
+//dovizhesapla fonksiyon sonu
+
+
+//Hesap Sonucunu sayfa yüklenirken gizle
+document.getElementById("ToplamSonuc").style.display = "none";
+
+
+document.getElementById("hesapla").onclick = function() {
+
+
+dovizhesapla();
+
+
+};
+
+
+
+</script></html>
